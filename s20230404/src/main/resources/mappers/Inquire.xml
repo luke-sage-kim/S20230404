@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.travelAlone.s20230404.InquireMapper" >
+			
+		<!-- 	문의사항갯수세기 -->
+		
+		<select id="mhInqTotal" resultType="int">	
+		select Count(*) FROM G_WRITING
+		</select> 
+		
+				<!-- 문의게시판 목록가져오기 -->
+		<select id="mhInquireList" parameterType="Inquire" resultType="Inquire" >
+    		<![CDATA[
+				SELECT *
+				FROM
+				(
+				        SELECT rownum rn , a.*
+				        FROM
+				                   (select                                    
+                                            g.G_WRITING_ID
+											,g.MEMBER_ID											
+											,g.G_TITLE
+											,g.G_CONTENT
+											,g.CREATE_DATE
+											,g.MODIFIED_DATE
+											,g.G_PASSWD
+											,g.G_VIEW_CNT
+											,g.G_REPLY_YN
+											,g.G_REPLY_CONTENT	
+                                            ,m.m_nickname
+										    from  G_WRITING g, Member m
+										    Where  g.member_id = m.member_id
+										     order by G_WRITING_ID desc) a
+											)   
+		 		WHERE  rn >= #{start} 
+		 		and    rn <= #{end} 
+		 	 ]]>	
+			
+		</select>
+		
+
+<!-- 문의사항 게시글가져오기 -->
+		<select id="mhInquireSelOne"  resultType="Inquire">		
+		  SELECT 
+		  
+		  g.* ,   m.m_nickname
+		  
+		  FROM G_WRITING g, Member m
+		    WHERE G_WRITING_ID = #{G_WRITING_ID} 
+		     and
+             g.member_id = m.member_id  
+		</select>
+		
+<!-- 문의글 시퀀스가져오기 -->		
+		<select id="mhSeqInquire"  parameterType="Inquire" resultType="int">
+			select G_WRITING_ID_SEQ.nextval from dual
+		</select>
+
+
+
+<!-- 문의사항 게시글작성하기 -->
+		<insert id="insertInquire" parameterType="Inquire">
+			 insert into G_WRITING 
+			 ( G_WRITING_ID , 			MEMBER_ID				, G_COMMON_CSBOARD	 , G_TITLE	, G_CONTENT	
+			 , G_PASSWD	, G_VIEW_CNT , G_REPLY_YN , G_REPLY_CONTENT		,CREATE_DATE , MODIFIED_DATE)
+			 values
+			  (#{g_writing_id}, #{member_id, jdbcType=NUMERIC}, #{g_common_csboard} , #{g_title}, #{g_content}, 
+			 #{g_passwd},	 0,				 0			,'' ,	sysdate, sysdate ) 				
+		</insert>
+
+
+
+
+
+<!-- 문의사항 게시글수정하기 -->
+		<update id="mhInquireUpdate" parameterType="Inquire">
+		 UPDATE  G_WRITING 
+		 SET 
+		  G_TITLE   	   = #{g_title},
+		  G_COMMON_CSBOARD = #{g_common_csboard},
+		  G_PASSWD		   = #{g_passwd},
+		  G_CONTENT		   = #{g_content} 
+		 WHERE  G_WRITING_ID = #{g_writing_id}
+		
+		</update>
+
+			<!--  문의사항 글삭제하기 -->
+		<delete id="deleteInquire" parameterType="int">
+			delete from G_WRITING where G_WRITING_ID = #{g_writing_id}
+		</delete>
+
+		<!-- 검색어결과갯수 -->
+		<select id="condInquireCnt" parameterType="Inquire" resultType="int">
+			select Count(*) FROM G_WRITING
+			where
+			<choose>
+				<when test="search == 's_title'">
+				  g_title  like '%' || #{keyword} || '%' 
+				</when>
+				<otherwise>
+					g_title like '%'
+				</otherwise>
+			</choose> 
+		</select>
+
+		<!-- 검색결과 -->
+		  <select id="mhinquireSearchList" parameterType="Inquire"  resultType="Inquire" >
+		SELECT *
+		FROM
+		(
+		        SELECT rownum rn , a.*
+		        FROM
+		                   (select * from G_WRITING 
+							<choose>
+					 			<when test="search == 's_title'">
+					                 WHERE g_title  like '%' || #{keyword} || '%'    
+					  			</when>
+					 			<when test="search == 's_content'">
+					                 WHERE g_content  like '%' || #{keyword} || '%'    
+					  			</when>
+					  			
+					            <otherwise>
+					                  WHERE g_title   like '%'   
+					            </otherwise>
+					        </choose>		                   
+		                    order by g_writing_id) a
+		 )   
+ 		WHERE  rn BETWEEN #{start} and #{end} 
+    </select>
+    
+    
+    	
+
+
+
+		<!-- 문의사항 게시글답변하기 -->
+		<update id= "mhInquireReply" parameterType="Inquire" >
+		 UPDATE  G_WRITING 
+		 SET 
+		  G_REPLY_YN   	   =  '1',	
+		  G_REPLY_CONTENT  = #{g_reply_content} 
+					    
+		 WHERE  G_WRITING_ID = #{g_writing_id}
+		
+		</update>
+
+
+
+	<!-- 조회된 데이터 갯수 세기 -->  
+		<select id="condOptionInquireCnt" resultType="int">
+			select Count(*) FROM G_WRITING where G_COMMON_CSBOARD = #{code}
+		</select>
+<!-- 조회된 데이터 리스트 --> 				
+		<select id="mhOptionInquireList" parameterType="Inquire" resultType="Inquire" >
+		 		SELECT *
+				FROM
+				(
+				        SELECT rownum rn , a.*
+				        FROM
+				                   (select * from G_WRITING 
+								     where G_COMMON_CSBOARD = #{code}        
+				                    order by g_writing_id desc) a
+				 )   
+		 		WHERE  rn BETWEEN #{start} and #{end} 
+			
+		</select>
+
+	<!-- 마이페이지 문의내역 리스트 개수 -->
+	<select id="mhMyInqListCnt" parameterType="long" resultType="int">
+		SELECT   COUNT(*)
+		FROM   G_WRITING
+		WHERE   member_id = #{memberId}
+	</select>
+
+	<!-- 마이페이지 문의내역 리스트 -->
+	<select id="mhMyInqList" parameterType="Inquire" resultType="Inquire">
+		SELECT *
+		FROM
+			(
+				SELECT rownum rn , a.*
+				FROM
+					(select
+						 g.G_WRITING_ID
+						  ,g.MEMBER_ID
+						  ,g.G_TITLE
+						  ,g.G_CONTENT
+						  ,g.CREATE_DATE
+						  ,g.MODIFIED_DATE
+						  ,g.G_PASSWD
+						  ,g.G_VIEW_CNT
+						  ,g.G_REPLY_YN
+						  ,g.G_REPLY_CONTENT
+						  ,m.m_nickname
+					 from  G_WRITING g, Member m
+					 Where  g.member_id = m.member_id
+					   And     g.member_id = #{member_id}
+					 order by G_WRITING_ID desc) a
+			)
+		WHERE  rn BETWEEN #{start} AND #{end}
+	</select>
+
+
+
+
+
+</mapper>
+<!-- G_WRITING_ID
+MEMBER_ID
+G_COMMON_CSBOARD
+G_TITLE
+G_CONTENT
+G_PASSWD
+G_VIEW_CNT
+G_REPLY_YN
+G_REPLY_CONTENT
+CREATE_DATE
+MODIFIED_DATE -->

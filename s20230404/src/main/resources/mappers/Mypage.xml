@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.travelAlone.s20230404.CommonMapper">
+
+		<select id="interestFindById" resultType="Interest" >
+			<![CDATA[
+			select i.interest_id, i.member_id, i.i_common_interest, i.create_date, i.modified_date, c.word
+			from interest i inner join Common c on i.i_common_interest = concat(c.bcd, c.mcd)
+			where i.member_id = #{memberId}
+			]]>
+		</select>
+
+		<select id="scoreCountById" resultType="ScoreCount" >
+			<![CDATA[
+			Select count(*) as count, c.word
+			from score s inner join common c
+			on s.s_common_spec = concat(c.bcd, c.mcd)
+			where s.member_id= #{memberId}
+			group by c.word
+		]]>
+		</select>
+
+		<select id="writingCountById" resultType="WritingCount" >
+			<![CDATA[
+			SELECT a.board_count, b.hou_review_count, c.res_review_count, d.tra_review_count,e.favorites_count,f.g_writing_count
+			FROM (SELECT COUNT(*) as board_count  FROM board WHERE member_id = #{memberId} AND b_re_level = 0 ) a ,
+				 (SELECT COUNT(*) as hou_review_count FROM HOU_REV WHERE MEMBER_id = #{memberId}) b ,
+				 (SELECT COUNT(*) as res_review_count FROM res_REV WHERE MEMBER_id = #{memberId}) c ,
+				 (SELECT COUNT(*) as tra_review_count FROM tra_REV WHERE MEMBER_id = #{memberId}) d ,
+				 (SELECT (SELECT COUNT(*) FROM TRA_FAV c WHERE c.Member_id = #{memberId}) + 
+				 		 (SELECT COUNT(*) FROM res_FAV b WHERE b.Member_id = #{memberId}) + 
+				 		 (SELECT COUNT(*) FROM hou_FAV a WHERE a.Member_id = #{memberId}) as favorites_count from dual) e ,
+				 (SELECT COUNT(*) as g_writing_count FROM g_writing WHERE MEMBER_id = #{memberId}) f
+			]]>
+		</select>
+
+		<update id="mypageMemberInfoUpdate" parameterType="Member" >
+			<![CDATA[
+			UPDATE MEMBER
+			SET M_NICKNAME = #{m_nickname},
+				M_PHONE    = #{m_phone}
+			WHERE MEMBER_ID = #{member_id}
+			]]>
+		</update>
+
+		<update id="mypageMemberProfileUpdate" parameterType="Member" >
+			<![CDATA[
+			UPDATE MEMBER
+			SET M_IMG_CONTEXT = #{m_img_context},
+				M_IMG_ORIGINAL_FILE = #{m_img_original_file},
+				M_IMG_STORED_FILE = #{m_img_stored_file},
+				M_COMMON_IMAGESTYPE = #{m_common_imagestype}
+			WHERE MEMBER_ID = #{member_id}
+			]]>
+		</update>
+
+		<select id="memberAllImgSearchForWithdrawal" resultType="ImgDto">
+			<![CDATA[
+			Select BOARD_ID AS ID, IMG_ID, IMG_CONTEXT, IMG_ORIGINAL_FILE, IMG_STORED_FILE
+			from BOD_IMG
+			where BOARD_ID IN (SELECT BOARD_ID FROM BOARD WHERE MEMBER_ID = #{id})
+			UNION ALL
+			Select G_WRITING_ID AS ID, IMG_ID, IMG_CONTEXT, IMG_ORIGINAL_FILE, IMG_STORED_FILE
+			from G_WRT_IMG
+			where G_WRITING_ID IN (SELECT G_WRITING_ID FROM G_WRITING WHERE MEMBER_ID = #{id})
+			UNION ALL
+			Select G_NOTICE_ID AS ID, IMG_ID, IMG_CONTEXT, IMG_ORIGINAL_FILE, IMG_STORED_FILE
+			from G_NOT_IMG
+			where G_NOTICE_ID IN (SELECT G_NOTICE_ID FROM G_NOTICE WHERE MEMBER_ID = #{id})
+			]]>
+		</select>
+
+		<!-- BOD_IMG 테이블의 데이터 삭제 -->
+		<delete id="deleteBodImgByMemberId" parameterType="long">
+			DELETE FROM BOD_IMG
+			WHERE BOARD_ID IN (SELECT BOARD_ID FROM BOARD WHERE MEMBER_ID = #{memberId})
+		</delete>
+
+		<!-- G_WRT_IMG 테이블의 데이터 삭제 -->
+		<delete id="deleteGwrtImgByMemberId" parameterType="long">
+			DELETE FROM G_WRT_IMG
+			WHERE G_WRITING_ID IN (SELECT G_WRITING_ID FROM G_WRITING WHERE MEMBER_ID = #{memberId})
+		</delete>
+
+		<!-- G_NOT_IMG 테이블의 데이터 삭제 -->
+		<delete id="deleteGnotImgByMemberId" parameterType="long">
+			DELETE FROM G_NOT_IMG
+			WHERE G_NOTICE_ID IN (SELECT G_NOTICE_ID FROM G_NOTICE WHERE MEMBER_ID = #{memberId})
+		</delete>
+	
+		<delete id="mypageMemberWithdrawal">
+			begin
+			DELETE FROM RECENTSEARCH WHERE MEMBER_ID = #{id};
+			DELETE FROM BOARD WHERE MEMBER_ID = #{id};
+			DELETE FROM TRA_FAV WHERE MEMBER_ID = #{id};
+			DELETE FROM HOU_FAV WHERE MEMBER_ID = #{id};
+			DELETE FROM RES_FAV WHERE MEMBER_ID = #{id};
+			DELETE FROM INTEREST WHERE MEMBER_ID = #{id};
+			DELETE FROM SCORE WHERE MEMBER_ID = #{id};
+			DELETE FROM WARNING WHERE MEMBER_ID = #{id};
+			DELETE FROM G_NOTICE WHERE MEMBER_ID = #{id};
+			DELETE FROM G_WRITING WHERE MEMBER_ID = #{id};
+			DELETE FROM HOU_REV WHERE MEMBER_ID = #{id};
+			DELETE FROM RES_REV WHERE MEMBER_ID = #{id};
+			DELETE FROM TRA_REV WHERE MEMBER_ID = #{id};
+			DELETE FROM MEMBER WHERE MEMBER_ID = #{id};
+			end;
+		</delete>
+
+		<select id="mypageReviewShowhouse" resultType="MypageReviewResponseDto" parameterType="MypageReviewRequestDto" >
+		<![CDATA[
+		SELECT *
+		FROM	(	Select *
+					from HOU_REV
+					where member_id = #{memberId}
+					Order by create_date desc	)
+		WHERE ROWNUM BETWEEN 10*(#{page}-1)+1 AND 10*#{page}
+		]]>
+		</select>
+
+		<select id="mypageReviewShowrestaurant" resultType="MypageReviewResponseDto" parameterType="MypageReviewRequestDto" >
+		<![CDATA[
+		SELECT *
+		FROM	(	Select *
+					 from RES_REV
+					 where member_id = #{memberId}
+					 Order by create_date desc	)
+		WHERE ROWNUM BETWEEN 10*(#{page}-1)+1 AND 10*#{page}
+		]]>
+		</select>
+
+		<select id="mypageReviewShowtravel" resultType="MypageReviewResponseDto" parameterType="MypageReviewRequestDto" >
+		<![CDATA[
+		SELECT *
+		FROM	(	Select *
+					 from TRA_REV
+					 where member_id = #{memberId}
+					 Order by create_date desc	)
+		WHERE ROWNUM BETWEEN 10*(#{page}-1)+1 AND 10*#{page}
+		]]>
+		</select>
+
+		<select id="memberInfo" resultType="Member">
+		<![CDATA[
+		SELECT 	*
+		FROM	MEMBER
+		WHERE 	MEMBER_ID = #{member_id}
+		]]>
+		</select>
+
+		<select id="kmTotalInquire" resultType="int">
+			select Count(*)
+			FROM G_WRITING
+			WHERE MEMBER_ID = #{id}
+		</select>
+
+		<select id="kmMypageFavoritesRes" resultType="MypageFavoriteResponseDto">
+		<![CDATA[
+		SELECT RF.RESTAURANT_ID AS id,
+			   R.R_NAME AS name, C.WORD AS loc,
+			   RF.MODIFIED_DATE AS modifiedDate,
+			   COUNT(RR.REVIEW_ID) AS reviewCount,
+			   AVG(RR.R_SCORE) AS score,
+			   (SELECT IMG_STORED_FILE FROM RES_IMG RI WHERE RI.RESTAURANT_ID = RF.RESTAURANT_ID AND ROWNUM = 1) AS thumbnail
+		FROM RES_FAV RF
+				 LEFT JOIN RES_REV RR ON RF.RESTAURANT_ID = RR.RESTAURANT_ID
+				 JOIN RESTAURANT R ON RF.RESTAURANT_ID = R.RESTAURANT_ID
+				 JOIN COMMON C on R.R_COMMON_LOC = concat(C.BCD, C.MCD)
+		WHERE RF.MEMBER_ID = #{id}
+		GROUP BY RF.RESTAURANT_ID,C.WORD, R.R_NAME, RF.MODIFIED_DATE
+		]]>
+		</select>
+
+	<select id="kmMypageFavoritesHou" resultType="MypageFavoriteResponseDto">
+	<![CDATA[
+		SELECT HF.HOUSE_ID AS id,
+			   H.H_NAME AS name,
+			   C.WORD AS loc,
+			   HF.MODIFIED_DATE AS modifiedDate,
+			   COUNT(HR.REVIEW_ID) AS reviewCount,
+			   AVG(HR.R_SCORE) AS score,
+			   (SELECT IMG_STORED_FILE FROM HOU_IMG HI WHERE HI.HOUSE_ID = HF.HOUSE_ID AND ROWNUM = 1) AS thumbnail
+		FROM HOU_FAV HF
+				 LEFT JOIN HOU_REV HR ON HF.HOUSE_ID = HR.HOUSE_ID
+				 JOIN HOUSE H ON HF.HOUSE_ID = H.HOUSE_ID
+				 JOIN COMMON C on H.H_COMMON_LOC = concat(C.BCD, C.MCD)
+		WHERE HF.MEMBER_ID = #{id}
+		GROUP BY HF.HOUSE_ID, C.WORD, H.H_NAME, HF.MODIFIED_DATE
+		]]>
+	</select>
+
+	<select id="kmMypageFavoritesTra" resultType="MypageFavoriteResponseDto">
+	<![CDATA[
+		SELECT TF.TRAVEL_ID AS id,
+			   T.T_NAME AS name,
+			   C.WORD AS loc,
+			   TF.MODIFIED_DATE AS modifiedDate,
+			   COUNT(TR.REVIEW_ID) AS reviewCount,
+			   TRUNC(AVG(TR.R_SCORE),0) AS score,
+			   (SELECT IMG_STORED_FILE FROM TRA_IMG TI WHERE TI.TRAVEL_ID = TF.TRAVEL_ID AND ROWNUM = 1) AS thumbnail
+		FROM TRA_FAV TF
+				 LEFT JOIN TRA_REV TR ON TF.TRAVEL_ID = TR.TRAVEL_ID
+				 JOIN TRAVEL T ON TF.TRAVEL_ID = T.TRAVEL_ID
+				 JOIN COMMON C on T.T_COMMON_LOC = concat(C.BCD, C.MCD)
+		WHERE TF.MEMBER_ID = #{id}
+		GROUP BY TF.TRAVEL_ID, C.WORD, T.T_NAME, TF.MODIFIED_DATE
+		]]>
+	</select>
+
+	<select id="kmMypageFavoritesCountTra" resultType="int">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM TRA_FAV
+		WHERE MEMBER_ID = #{id}
+		]]>
+	</select>
+
+	<select id="kmMypageFavoritesCountRes" resultType="int">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM RES_FAV
+		WHERE MEMBER_ID = #{id}
+		]]>
+	</select>
+
+	<select id="kmMypageFavoritesCountHou" resultType="int">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM HOU_FAV
+		WHERE MEMBER_ID = #{id}
+		]]>
+	</select>
+
+	<select id="mypageInterestAll" resultType="CommonInterest">
+	<![CDATA[
+		SELECT *
+		FROM COMMON
+		WHERE BCD = 'int'
+		]]>
+	</select>
+
+	<select id="mypageInterestById" resultType="Interest">
+	<![CDATA[
+		SELECT I.INTEREST_ID AS INTEREST_ID,
+		       I.MEMBER_ID AS MEMBER_ID,
+		       I.I_COMMON_INTEREST AS I_COMMON_INTEREST,
+		       C.WORD AS WORD
+		FROM INTEREST I
+		LEFT JOIN COMMON C ON I.I_COMMON_INTEREST = CONCAT(C.BCD, C.MCD)
+		WHERE MEMBER_ID = #{id}
+		]]>
+	</select>
+
+	<update id="mypageInterestInsert" parameterType="MypageInterestUpdateRequestDto">
+		INSERT INTO interest (INTEREST_ID, MEMBER_ID, I_COMMON_INTEREST, CREATE_DATE, MODIFIED_DATE)
+		select INTEREST_ID_SEQ.NEXTVAL AS interestId, A.*
+		from(
+		<foreach item="tagId" collection="savedTagIds" separator="UNION ALL ">
+			select #{id} as memberId, #{tagId} as iCommonInterest, SYSDATE as createDate, SYSDATE as modifiedDate
+			from dual
+		</foreach>
+		) A
+	</update>
+
+	<delete id="mypageInterestDelete" parameterType="MypageInterestUpdateRequestDto">
+		DELETE FROM interest
+		WHERE MEMBER_ID = #{id, jdbcType=NUMERIC}
+		AND I_COMMON_INTEREST IN
+		<foreach collection="savedTagIds" item="tagId" separator=","
+				 open="(" close=")">
+			#{tagId, jdbcType=VARCHAR}
+		</foreach>
+	</delete>
+
+
+</mapper>

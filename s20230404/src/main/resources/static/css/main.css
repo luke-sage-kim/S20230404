@@ -1,0 +1,295 @@
+@charset "UTF-8";
+
+	/* 몸통 */
+	body {
+		 font-size: 20px;		color: #205E61;
+		 font-weight: bolder;
+		 font-family: 'IBM Plex Sans KR', sans-serif; 
+		 margin: 0; 			padding: 0;
+		 text-align: center;
+	}
+	
+	
+	
+	
+	/* 기본 p 글자 */
+	p {
+		font-size: 13px; 		weight: 100%;
+		float:left;				height: 1px;
+	}	
+	
+	ul li{ list-style: none; }
+	
+	a{ text-decoration:none; }
+	
+	/* 링크 글자 색깔 */
+	a:link { text-decoration: none;	color: #5F9EA0; }
+	
+	/* 방문한 링크 색깔 */
+	a:visited { color: #5F9EA0; }
+	
+	#each-name > a {
+    color: black;
+
+	}
+		
+	/* 구분선 */
+	hr {
+		height: 7px; 		border-radius: 4px;
+		width: 600px; 		border: 0px;
+		background-color: #5F9EA0; 
+	}
+	
+
+	
+	/* 헤더 */
+	.header { width: 100%; }
+	
+	/* 로고   */
+	.logo { float:left; }
+	
+	.logo img{
+		display: block; 	width: 135px;
+		height: 135px; 		padding: 15px 0 0 15px;
+		object-fit: cover;
+	}
+	
+	/* 메뉴 폼 */
+	.headerForm { padding: 130px 0 0 0; }
+	
+	.headerBenner > ul > li { position:relative; }
+	
+	.headerBenner > ul > li > ul {
+		width: 292px; 		border-box: 300px;
+		display:none; 		position: absolute;
+		font-size: 25px; 	font-weight: bolder;
+	}
+
+	.headerBenner > ul > li:hover > ul { display: block; }
+	
+	.headerBenner > ul > li > ul > li:hover {
+		background: white;
+		transition: ease 1s;
+		border-radius: 13px;
+		opacity: 0.85;
+	}
+	
+	/* 화면크기가 1250이상일때만 메뉴 보여줌 */
+	@media screen and (min-width: 1570px) {
+		.headerBenner > ul > li {
+			font-size: 27px; 	font-weight: bolder;
+		    width: 370px; 		display: inline-block;
+		}
+	}
+
+	/* 화면크기가 1250이하이면 배너 숨김 */
+	@media screen and (max-width: 1570px) {
+		.headerBenner > ul > li { display: none; }
+	}
+
+	a:hover { 
+		color: #205E61;
+		transition: ease 0.5s;
+	}
+	
+	/* 로그인,회원가입 */
+	.headerLogin {
+		font-size: 14px;
+		float: right;
+		padding: 23px;
+		marge-right: 30px;
+		font-weight: bolder;
+	    display: inline-block;
+	}
+	
+	.clearfix::after{
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	/* 본문 */
+	#content { display: inline; text-align: center; }
+	
+	/* 이미지 베너 */
+	#img_benner{
+		display: inline; 	margin: 15px;
+		text-align: center;
+	}
+	
+	#img_benner > img {
+	    margin: auto; 		width: 100%;
+	    display: block;
+	}
+	
+	/* 푸터 */
+	.footerForm {
+		display: inline; 	
+		font-size: 14px;
+		float: right;
+		font-weight: bolder;
+	    display: inline-block;
+		padding: 23px;
+		marge-right: 30px;
+	}
+	
+	.clearfix::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	.footerInfo {
+		display: inline; 	
+		font-size: 14px;
+		float: left;
+		padding: 0 10px;
+		font-weight: bolder;
+		margin: 30px 0;		
+	    display: inline-block;
+	}
+	
+	/* 검색 창 */
+	#serch > input {
+	    width: 600px;		height: 40px;
+	    padding: 20px; 		font-size: 15px; 
+	    border-radius:25px;	margin: 16px;
+		color: #205E61;  	font-weight: bolder;
+	    box-sizing: border-box;
+	    background-color: #F8F8F8;
+		font-family: 'Roboto', sans-serif; 
+		border: 3px solid  #205E61;
+	}
+	
+	#serch > input::placeholder{ color: #5F9EA0; }
+	
+	#serch > input:focus{ outline: 0px solid #205E61; }
+
+	 
+	 /* 메인 페이지 이미지 */
+  	.swiper-container {
+        height:300px;
+        /* border:1px solid silver; */
+        /* border-radius: 2px; */
+        /* box-shadow:0 0 10px #ccc inset; */
+	}
+	.swiper-slide {
+	   text-align:center;
+	   display:flex; /* 내용을 중앙정렬 하기위해 flex 사용 */
+	   align-items:center; /* 위아래 기준 중앙정렬 */
+	   justify-content:center; /* 좌우 기준 중앙정렬 */
+	}
+	.swiper-slide img {
+		box-shadow: 0 0 5px #555;
+		max-width: 100%; /* 이미지 최대너비를 제한, 슬라이드에 이미지가 여러개가 보여질때 필요 */
+	}
+	
+	/* 검색창과 카테고리 */
+	#category {
+	  width: 150px;
+	  height: 40px;
+	  font-size: 15px;
+	  margin-right: 10px;
+	  border-radius: 25px;
+	  padding: 0 20px;
+	  background-color: #F8F8F8;
+	  color: #205E61;
+	  font-weight: bold;
+	  font-family: 'Roboto', sans-serif;
+	  border: 3px solid #205E61;
+	}
+	
+	#category option {
+  		border-radius: 25px;
+		}
+	
+	
+	#serch {
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  
+	}
+	
+	#serch > input {
+	  width: 600px;
+	  height: 40px;
+	  padding: 20px;
+	  font-size: 15px;
+	  border-radius: 25px;
+	  color: #205E61;
+	  font-weight: bold;
+	  box-sizing: border-box;
+	  background-color: #F8F8F8;
+	  font-family: 'Roboto', sans-serif;
+	  border: 3px solid #205E61;
+	}
+	
+	#serch > input::placeholder {
+	  color: #5F9EA0;
+	}
+	
+	#serch > input:focus {
+	  outline: none;
+	}
+		
+	#category,
+	#serch {
+	  display: inline-block;
+	  vertical-align: middle;
+	  margin: 0;
+	}
+	
+	
+	/* 자동 완성 */
+	.ui-autocomplete {
+	   font-size: 14px !important; 
+	   text-align: left;
+	   font-family: 'IBM Plex Sans KR', sans-serif !important;
+	   border-radius: 15px;
+	   color: #205E61 !important;
+	   border: 3px solid #205E61;
+	}
+	
+	
+
+	/* 인기 명소, 숙소, 맛집 이미지 효과 */
+	.image-container img {
+	  align-self: center;
+	}
+		
+
+	.image-container:hover img {
+	  filter: saturate(0.3) brightness(0.8);
+	  transition: all 0.3s ease-out;
+	}
+	
+
+	.image-container {
+	  position: relative;
+	  width: 500px;
+	  height: 300px;
+	  /* 추가 */
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: center;
+	}
+	.image-container img:hover + .image-text {
+	  opacity: 1;
+	}
+	
+	
+	.image-text {
+	  position: absolute;
+	  top: 50%;
+	  left: 50%;
+	  transform: translate(-50%, -50%);
+	  color: #fff;
+	  font-size: 1.2em;
+	  padding: 5px;
+	  opacity: 0;
+	  transition: opacity 0.5s ease;
+	}
+
+
+	

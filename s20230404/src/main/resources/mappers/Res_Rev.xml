@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.travelAlone.s20230404.Res_RevMapper">
+
+	<!-- 리뷰목록 가져오기 -->
+<select id="resRevList" parameterType="Res_Rev" resultType="Res_Rev" >
+    		<![CDATA[
+			SELECT							  
+				       hr. *
+				       ,m.m_nickname
+			 FROM    RES_REV hr,  Member m
+			 WHERE    
+			 RESTAURANT_ID =   #{RESTAURANT_ID}  
+			 and
+			  hr.member_id = m.member_id   
+			                      					 		
+		 	 ]]>	
+			
+		</select>
+
+
+<!-- 맛집 리뷰글 작성하기 -->
+		<insert id="insertRestaurantRev" parameterType="Res_Rev">
+			 insert into RES_REV 
+			  (REVIEW_ID , RESTAURANT_ID ,MEMBER_ID ,R_CONTENT ,R_SCORE
+		            ,CREATE_DATE ,MODIFIED_DATE )
+		  	values
+		  	  (RES_REV_SEQ.nextval, #{restaurant_id}, #{member_id}, #{r_content}, #{r_score}
+		  	  ,sysdate, sysdate	)        
+				
+		</insert>
+
+<!-- 맛집 리뷰글 수정하기 -->
+		<update id="skRestaurantRevUpdate" parameterType="Res_Rev">
+		 UPDATE  RES_REV 
+		 SET 
+		  R_CONTENT   	   = #{r_content},
+		  R_SCORE 		   = #{r_score}
+	
+		 WHERE  review_id = #{review_id}
+		
+		</update>
+
+<!--  맛집 리뷰글 삭제하기 -->
+		<delete id="deleteResRev" parameterType="int">
+			delete from RES_REV where REVIEW_ID = #{review_id}
+		</delete>
+
+<!--  맛집 리뷰글 글다삭제하기 -->
+		<delete id="deleteResRevAll"  parameterType="int">
+		 DELETE     from RES_REV   WHERE RESTAURANT_ID = #{restaurant_id}
+		</delete>	
+
+
+
+
+</mapper>

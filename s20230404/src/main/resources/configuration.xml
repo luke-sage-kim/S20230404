@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config
+3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+
+<configuration>
+	<typeAliases>
+		<typeAlias alias="Notice" type="com.travelAlone.s20230404.model.mh.Notice"/>
+		<typeAlias alias="Not_Img" type="com.travelAlone.s20230404.model.mh.Not_Img"/>
+		<typeAlias alias="Search" type="com.travelAlone.s20230404.model.si.Search"/>
+		<typeAlias alias="Inquire" type="com.travelAlone.s20230404.model.mh.Inquire"/>
+		<typeAlias alias="Inq_Img" type="com.travelAlone.s20230404.model.mh.Inq_Img"/>
+		<typeAlias alias="House" type="com.travelAlone.s20230404.model.House"/>
+		<typeAlias alias="Hou_Img" type="com.travelAlone.s20230404.model.Hou_Img"/>
+		<typeAlias alias="Hou_Rev" type="com.travelAlone.s20230404.model.Hou_Rev"/>
+		<typeAlias alias="Hou_Fav" type="com.travelAlone.s20230404.model.Hou_Fav"/>
+		<typeAlias alias="Travel" type="com.travelAlone.s20230404.model.Travel"/>
+		<typeAlias alias="Tra_Img" type="com.travelAlone.s20230404.model.Tra_Img"/>
+		<typeAlias alias="Tra_Rev" type="com.travelAlone.s20230404.model.Tra_Rev"/>
+		<typeAlias alias="Tra_Fav" type="com.travelAlone.s20230404.model.Tra_Fav"/>
+		<typeAlias alias="Res" type="com.travelAlone.s20230404.model.Res"/>
+		<typeAlias alias="Res_Img" type="com.travelAlone.s20230404.model.Res_Img"/>
+		<typeAlias alias="Res_Rev" type="com.travelAlone.s20230404.model.Res_Rev"/>
+		<typeAlias alias="Res_Fav" type="com.travelAlone.s20230404.model.Res_Fav"/>
+		<typeAlias alias="Board" type="com.travelAlone.s20230404.model.Board"/>
+		<typeAlias alias="BodImg" type="com.travelAlone.s20230404.model.BodImg"/>
+		<typeAlias alias="Common" type="com.travelAlone.s20230404.model.CommonCode"/>
+		<typeAlias alias="Interest" type="com.travelAlone.s20230404.model.Interest"/>
+		<typeAlias alias="Score" type="com.travelAlone.s20230404.model.Score"/>
+		<typeAlias alias="Member" type="com.travelAlone.s20230404.model.Member"/>
+		<typeAlias alias="ScoreCount" type="com.travelAlone.s20230404.model.dto.km.ScoreCount"/>
+		<typeAlias alias="WritingCount" type="com.travelAlone.s20230404.model.dto.km.WritingCount"/>
+		<typeAlias alias="MypageReviewRequestDto" type="com.travelAlone.s20230404.model.dto.km.MypageReviewRequestDto"/>
+		<typeAlias alias="MypageReviewResponseDto" type="com.travelAlone.s20230404.model.dto.km.MypageReviewResponseDto"/>
+		<typeAlias alias="Warning" type="com.travelAlone.s20230404.model.Warning"/>
+		<typeAlias alias="CondDTO" type="com.travelAlone.s20230404.model.si.TimeDTO"/>
+		<typeAlias alias="RecentSearch" type="com.travelAlone.s20230404.model.si.RecentSearch"/>
+		<typeAlias alias="MypageFavoriteResponseDto" type="com.travelAlone.s20230404.model.dto.km.MypageFavoriteResponseDto"/>
+		<typeAlias alias="CommonInterest" type="com.travelAlone.s20230404.model.Common"/>
+		<typeAlias alias="MypageInterestUpdateRequestDto" type="com.travelAlone.s20230404.model.dto.km.MypageInterestUpdateRequestDto"/>
+		<typeAlias alias="ImgDto" type="com.travelAlone.s20230404.model.dto.km.ImgDto"/>
+	</typeAliases>
+</configuration>
+
+		
